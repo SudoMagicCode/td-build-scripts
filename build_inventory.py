@@ -42,6 +42,10 @@ def main():
         build_settings=build_settings.env_vars, dist_info=dist_info.asDict)
 
     # run td project
+    print("--> Fetch TDM elements")
+    subprocess.call(['tdm', 'install'], cwd="./TouchDesigner/")
+
+    # run td project
     print("--> Starting TouchDesigner")
     td_version = f"C:/Program Files/Derivative/TouchDesigner.{build_settings.td_version}/bin/TouchDesigner.exe"
     subprocess.call([td_version, build_settings.project_file])
