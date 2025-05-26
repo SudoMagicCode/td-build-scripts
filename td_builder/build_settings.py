@@ -2,15 +2,18 @@ import json
 
 
 class settings:
-    REQUIRED_KEYS: list = ["BUILD", "TD_VERSION",
-                           "PROJECT_FILE", "REPO", "COMP_NAME"]
+    REQUIRED_KEYS: list[str] = [
+        "BUILD",
+        "TD_VERSION",
+        "PROJECT_FILE",
+        "REPO",
+        "COMP_NAME"]
 
     def __init__(self):
         self.project_file: str
         self.td_version: str
         self.log_file: str
         self.privacy: str
-        self.repo: str
         self._build: str = "TRUE"
         self._project_name: str = "TBD"
         self.release_dir: str = 'release'
@@ -43,7 +46,6 @@ class settings:
             "SM_SAVE_PATH": f"../{self.dest_dir}",
             "SM_COMP_NAME": self.project_name,
             "SM_LOG_FILE": f"../{self.log_file}",
-            "SM_REPO": self.repo,
             "SM_TD_PACKAGE_FILE": f"../{self.td_package_file}"
         }
 
@@ -62,11 +64,10 @@ class settings:
 
                 if set(settings.REQUIRED_KEYS) <= data.keys():
                     print('-> all required keys accounted for')
-                    self._build = data.get("BUILD")
-                    self.td_version = data.get("TD_VERSION")
-                    self.project_file = data.get("PROJECT_FILE")
-                    self.repo = data.get("REPO")
-                    self._project_name = data.get("COMP_NAME")
+                    self._build = data.get("BUILD", "development")
+                    self.td_version = data.get("TD_VERSION", "unknown")
+                    self.project_file = data.get("PROJECT_FILE", "unknown")
+                    self._project_name = data.get("COMP_NAME", "not-set")
 
                     for key, value in data.items():
                         if key in settings.REQUIRED_KEYS:
@@ -86,4 +87,4 @@ class settings:
             print("-> unable to locate build settings, please ensure a 'buildSettings.json file is in the root of your project")
             exit
 
-        return
+        return {}

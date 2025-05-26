@@ -2,6 +2,11 @@ import subprocess
 
 
 class distInfo:
+    '''distInfo is a python object that contains utility data about a git repo.
+
+    This utility information is useful for version tagging and passing additional resource
+    data along to any automation services that are running on top of TD automation repos.
+    '''
 
     def __init__(self):
         self.commit: str
@@ -10,10 +15,28 @@ class distInfo:
         self.minor: str
         self.patch: str
         self.branch: str
+        self.remoteOrigin: str
+        self.remoteSource: str
 
-        self.GetVersioningInfo()
+        # self._updateVersionInfo()
+        self._updateRemoteInfo()
 
-    def GetVersioningInfo(self) -> None:
+    def _updateRemoteInfo(self) -> None:
+        '''Pulls info about the remote URL directly from git.
+
+        remoteOrigin will contain the the https prefix
+        remoteSource has both the https prefix and .git suffix stripped out
+        '''
+        git_branch_process = subprocess.run(
+            "git remote get-url origin", shell=True, capture_output=True)
+        remote = str(git_branch_process.stdout, 'utf-8').strip()
+        self.remoteOrigin = remote[:-4]
+        self.remoteSource = remote[8:-4]
+
+    def _updateVersionInfo(self) -> None:
+        '''Pulls version info from the latest version tag off of the repo itself
+        '''
+
         # grab git information...
         git_branch_process = subprocess.run(
             "git rev-parse --abbrev-ref HEAD", shell=True, capture_output=True)
@@ -45,7 +68,7 @@ class distInfo:
             else:
                 semver = f"{semver}+{branch}"
 
-        self.commit = current_commit_hash
+        self.commit = "unknown" if current_commit_hash == None else current_commit_hash
         self.semver = semver
         self.major = major
         self.minor = minor
@@ -54,13 +77,19 @@ class distInfo:
 
     @property
     def asDict(self) -> dict:
+        '''Returns the info object as a dictionary'''
+
         info_dict = {
             "commit": self.commit,
             "semver": self.semver,
             "major": self.major,
             "minor": self.minor,
             "patch": self.patch,
-            "branch": self.branch
+            "branch": self.branch,
+            "remoteUrl": self.remoteOrigin
         }
 
         return info_dict
+
+
+distInfo()

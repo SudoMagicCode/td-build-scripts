@@ -2,11 +2,7 @@ import subprocess
 import os
 import shutil
 
-
-import td_builder.build_settings
-import td_builder.env_var_utils
-import td_builder.gitVersion
-import td_builder.read_td_log
+import td_builder
 
 artifact_dir_name = "artifacts"
 targets_dir_name = "targets"
@@ -32,7 +28,7 @@ def main():
     print("> Starting deploy process...")
 
     print("-> Finding Version Info...")
-    dist_info = td_builder.gitVersion.distInfo()
+    dist_info = td_builder.distInfo()
 
     print(
         f"--> Creating build {dist_info.major}.{dist_info.minor}.{dist_info.patch}")
