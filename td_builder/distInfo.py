@@ -18,7 +18,7 @@ class distInfo:
         self.remoteOrigin: str
         self.remoteSource: str
 
-        # self._updateVersionInfo()
+        self._updateVersionInfo()
         self._updateRemoteInfo()
 
     def _updateRemoteInfo(self) -> None:
@@ -27,6 +27,7 @@ class distInfo:
         remoteOrigin will contain the the https prefix
         remoteSource has both the https prefix and .git suffix stripped out
         '''
+
         git_branch_process = subprocess.run(
             "git remote get-url origin", shell=True, capture_output=True)
         remote = str(git_branch_process.stdout, 'utf-8').strip()
@@ -90,6 +91,3 @@ class distInfo:
         }
 
         return info_dict
-
-
-distInfo()
